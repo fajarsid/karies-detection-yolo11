@@ -1,3 +1,6 @@
+# Aplikasi Deteksi Karies Gigi menggunakan YOLO11
+# Fitur: Deteksi karies pada gambar/video, pelatihan model, dan pengaturan model via Streamlit
+
 #Import All the Required Libraries
 import cv2
 import streamlit as st
