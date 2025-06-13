@@ -86,7 +86,6 @@ def show_image_detection(model, confidence):
     if detection_results_data is not None:
         st.markdown("---")
         display_detection_results(detection_results_data, config.CLASSIFICATION)
-        # with st.expander("Detail Hasil Deteksi", expanded=True):
 
 def show_video_detection(model, confidence):
     """Handle video detection"""

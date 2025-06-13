@@ -29,7 +29,7 @@ def load_model(model_type, config):
 
 def display_detection_results(detection_data, classification_labels):
     """Menampilkan hasil deteksi dalam dua bagian yang terpisah: Ringkasan dan Tabel Detail."""
-
+    print(detection_data is None or len(detection_data) == 0)
     # --- Bagian 1: Ringkasan Deteksi Gigi ---
     with st.expander("Kesimpulan Hasil Deteksi", expanded=True): 
         st.write("#### Ringkasan Deteksi Gigi") # Judul untuk bagian ringkasan
@@ -47,25 +47,21 @@ def display_detection_results(detection_data, classification_labels):
         for box in detection_data:
             class_id = int(box.data[0][5]) # Ambil class_id dari tensor box.data
             
-            # Asumsi: class_id 0 = Karies, class_id 1 = Gigi
+            # class_id 0 = Karies, class_id 1 = Gigi
             if class_id == 0: # Jika ini adalah class_id untuk 'Karies'
                 carious_detections_count += 1
             elif class_id == 1: # Jika ini adalah class_id untuk 'Gigi'
-                total_gigi_detections_count += 1
-                
+                total_gigi_detections_count += 1        
         # Tampilkan Kesimpulan
-        if total_gigi_detections_count > 0:
-            st.write(f"Terdapat **{carious_detections_count}** titik lokasi **{classification_labels[0]}** dari **{total_gigi_detections_count}** **{classification_labels[1]}** yang terdeteksi.")
-            
-            st.markdown(f"**Kesimpulan:** Ada **{carious_detections_count}** titik lokasi karies yang diidentifikasi oleh model pada gambar ini.")
-            
-            if carious_detections_count > 0:
-                st.warning("Disarankan untuk konsultasi lebih lanjut dengan profesional gigi.")
-            else:
-                st.success("Berdasarkan deteksi model, tidak ada karies yang teridentifikasi pada gambar ini.")
-        else:
-            st.info("Model tidak mengidentifikasi adanya gigi dalam gambar ini untuk dianalisis.")
+        st.write(f"Terdapat **{carious_detections_count}** titik lokasi **{classification_labels[0]}**"
+         f"{f' dari **{total_gigi_detections_count}** **{classification_labels[1]}** yang terdeteksi.' if total_gigi_detections_count > 0 else '.'}")
+        st.markdown(f"**Kesimpulan:** Ada **{carious_detections_count}** titik lokasi karies yang diidentifikasi oleh model pada gambar ini.")
 
+        if carious_detections_count > 0:
+            st.warning("Disarankan untuk konsultasi lebih lanjut dengan profesional gigi.")
+        else:
+            st.success("Berdasarkan deteksi model, tidak ada karies yang teridentifikasi pada gambar ini.")
+        
     # --- Bagian 2: Detail Hasil Deteksi ---
     # Bagian ini tetap di dalam expander, yang secara implisit berfungsi sebagai container
     with st.expander("Detail Hasil Deteksi", expanded=True): 
@@ -166,16 +162,17 @@ def start_training(dataset_config, model_arch, epochs, batch, imgsz):
     try:
         model = YOLO(model_arch)
         run_name = 'karies_yolo11_web' 
-        
+        print(str(TRAIN_RUNS_DIR.parent))
         with st.spinner("Sedang melatih model..."):
             results = model.train(
                 data=dataset_config,
                 epochs=int(epochs),
                 imgsz=int(imgsz),
                 batch=int(batch),
-                project=str(TRAIN_RUNS_DIR.parent),
-                name=run_name
+                project='runs/train',
+                name='karies_yolo11_web'
             )
+        
         latest_model_path = get_latest_trained_model_path(base_name=run_name)
         if latest_model_path and latest_model_path.exists():
             st.success(f"Training selesai! Model terbaik disimpan di: `{latest_model_path}`")
@@ -186,3 +183,7 @@ def start_training(dataset_config, model_arch, epochs, batch, imgsz):
         
     except Exception as e:
         st.error(f"Terjadi error saat training: {e}")
+
+# NOTE: Jika mengalami error git "non-fast-forward", lakukan:
+#   git pull
+# sebelum melakukan git push lagi.
