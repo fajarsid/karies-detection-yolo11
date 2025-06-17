@@ -1,23 +1,30 @@
-# main.py
-import sys
+from components.login import show_login_page
 import streamlit as st
+st.set_page_config(
+    page_title="YOLO11 | Deteksi Karies",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+
+import sys
 import config
-from pages import show_detection_page, show_training_page, show_about_page
+from components.detection import show_detection_page
+from components.training import show_training_page
+from components.about import show_about_page
+from components.preprocessing import show_preprocessing_page 
+from components.labeling import show_labeling_page 
+
 
 def setup_app():
+
+    
     """Setup application configuration"""
-    # Add root path to sys.path
     if config.ROOT not in sys.path:
         sys.path.append(str(config.ROOT))
     
-    # Configure Streamlit page
-    st.set_page_config(
-        page_title="YOLO11 | Deteksi Karies",
-        page_icon="🤖",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
-    # Custom CSS for better appearance
+    # Optional: Tambahkan gaya khusus
     st.markdown("""
         <style>
         .main {background-color: #630039;}
@@ -31,33 +38,47 @@ def setup_app():
     """, unsafe_allow_html=True)
 
 def main():
-    """Main application entry point"""
     setup_app()
     
-    # Custom sidebar with logo and info
-    st.sidebar.image("images/ti.png")
-    st.sidebar.markdown("<h2 style='color:#fff;'>YOLO11 Karies</h2>", unsafe_allow_html=True)
-    st.sidebar.markdown("---")
-    menu = st.sidebar.selectbox(
-        "Menu", 
-        ["Deteksi Karies Gigi", "Latih Model", "Tentang"]
-    )
+    if "logged_in" not in st.session_state:
+        st.session_state["logged_in"] = False
 
-    # Main header and description
-    st.markdown("<div class='header-title'>🤖 Deteksi Karies Gigi Otomatis</div>", unsafe_allow_html=True)
-    st.markdown("<div class='desc'>Selamat datang di aplikasi deteksi karies gigi menggunakan YOLOv8. Silakan pilih menu di samping untuk memulai deteksi, melatih model, atau mengetahui informasi aplikasi.</div>", unsafe_allow_html=True)
-    st.markdown("---")
+    # Jika belum login, tampilkan login page dan hentikan eksekusi lebih lanjut
+    if not st.session_state["logged_in"]:
+        show_login_page()
+        return
 
-    # Route to appropriate page
+    # Jika sudah login, tampilkan sidebar menu dan tombol logout
+    with st.sidebar:
+        st.markdown("<h2 style='color:#fff; text-align:center;'>YOLO11 Karies</h2>", unsafe_allow_html=True)
+        menu = st.radio("Menu", [
+            "Tentang", 
+            "Preprocessing",
+            "Labeling", 
+            "Latih Model", 
+            "Deteksi Karies Gigi"
+        ], key="main_menu")
+        st.markdown("---")
+        st.caption("© 2025 Intan | Teknik Informatika Universitas Nusaputra")
+        # Pindahkan tombol Logout ke bagian paling bawah sidebar agar selalu tampil
+        logout_clicked = st.button("Logout", key="logout_btn")
+
+    # Logout harus dicek di luar with agar selalu dieksekusi
+    if st.session_state.get("logged_in") and logout_clicked:
+        st.session_state["logged_in"] = False
+        st.rerun()
+
+    # Routing halaman (jika sudah login)
     if menu == "Deteksi Karies Gigi":
         show_detection_page()
     elif menu == "Latih Model":
         show_training_page()
     elif menu == "Tentang":
         show_about_page()
+    elif menu == "Preprocessing":
+        show_preprocessing_page()
+    elif menu == "Labeling":
+        show_labeling_page()
 
 if __name__ == "__main__":
     main()
-
-    st.sidebar.markdown("---")
-    st.sidebar.info("Developed by Intan 2025 | Teknik Informatika Universitas Nusaputra")

@@ -10,7 +10,6 @@ ROOT = Path(__file__).resolve().parent
 
 # Directories
 IMAGES_DIR = ROOT / 'images'
-VIDEO_DIR = ROOT / 'videos'
 MODEL_DIR = ROOT / 'weights'
 
 # Default files
@@ -58,12 +57,6 @@ DETECTION_MODEL = get_latest_trained_model_path() or (MODEL_DIR / 'default_yolo_
 SEGMENTATION_MODEL = MODEL_DIR / 'yolo11n-seg.pt'
 POSE_ESTIMATION_MODEL = MODEL_DIR / 'yolo11n-pose.pt'
 
-# Video files
-VIDEOS_DICT = {
-    'video 1': VIDEO_DIR / 'video1.mp4',
-    'video 2': VIDEO_DIR / 'video2.mp4'
-}
-
 # Constants
 CLASSIFICATION = ["karies", "gigi"]
-SOURCES_LIST = ['Image', 'Video']
+SOURCES_LIST = ['Image', ]

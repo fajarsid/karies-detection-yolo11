@@ -102,30 +102,6 @@ def process_image_detection(model, image, confidence):
             "error": str(e)
         }
 
-def process_video_detection(model, video_path, confidence):
-    """Process video detection with real-time display"""
-    try:
-        video_cap = cv2.VideoCapture(str(video_path))
-        st_frame = st.empty()
-        
-        while video_cap.isOpened():
-            success, image = video_cap.read()
-            if success:
-                image = cv2.resize(image, (720, int(720 * (9/16))))
-                result = model.predict(image, conf=confidence)
-                result_plotted = result[0].plot()
-                
-                st_frame.image(
-                    result_plotted, 
-                    caption="Detected Video",
-                    channels="BGR",
-                    use_container_width=True
-                )
-            else:
-                video_cap.release()
-                break
-    except Exception as e:
-        st.sidebar.error(f"Error Loading Video: {str(e)}")
 
 def validate_training_config(dataset_config):
     """Validate training configuration"""
@@ -184,6 +160,18 @@ def start_training(dataset_config, model_arch, epochs, batch, imgsz):
     except Exception as e:
         st.error(f"Terjadi error saat training: {e}")
 
-# NOTE: Jika mengalami error git "non-fast-forward", lakukan:
-#   git pull
-# sebelum melakukan git push lagi.
+def save_yolo_labels(detection_data, label_path):
+    """
+    Simpan bounding boxes ke file YOLO format:
+    class_id center_x center_y width height
+    """
+    with open(label_path, "w") as f:
+        for item in detection_data:
+            class_id = item["class_id"]
+            x_center = item["x_center"]
+            y_center = item["y_center"]
+            width = item["width"]
+            height = item["height"]
+            f.write(f"{class_id} {x_center} {y_center} {width} {height}\n")
+
+
