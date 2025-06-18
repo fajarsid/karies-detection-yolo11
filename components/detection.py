@@ -17,7 +17,6 @@ def render_page_config():
     }
 
 def show_detection_page():
-    st.header("Deteksi Karies Gigi dengan YOLO11")
 
     # Konfigurasi model
     config_data = render_page_config()
@@ -33,42 +32,53 @@ def show_detection_page():
 
 def show_image_detection(model, confidence):
     st.subheader("Unggah Gambar Gigi")
+    
+    # Validasi model terlebih dahulu
+    if model is None:
+        st.error("Model tidak berhasil dimuat. Silakan coba lagi atau hubungi administrator.")
+        return
 
     source_image = st.file_uploader(
         "Unggah file (jpg/png/jpeg/bmp/webp)",
-        type=("jpg", "png", "jpeg", "bmp", "webp")
+        type=("jpg", "png", "jpeg", "bmp", "webp"),
+        accept_multiple_files=False
     )
 
-    detection_results_data = None
     col1, col2 = st.columns(2)
+    detection_results_data = None
 
     with col1:
         try:
+            default_img = Image.open(config.DEFAULT_IMAGE) if isinstance(config.DEFAULT_IMAGE, str) else config.DEFAULT_IMAGE
             if source_image is None:
-                st.image(str(config.DEFAULT_IMAGE), caption="Gambar Default", use_container_width=True)
+                st.image(default_img, caption="Gambar Default", use_column_width=True)
             else:
-                st.image(source_image, caption="Gambar Diunggah", use_container_width=True)
+                uploaded_img = Image.open(source_image)
+                st.image(uploaded_img, caption="Gambar Diunggah", use_column_width=True)
         except Exception as e:
-            st.error("Gagal memuat gambar.")
-            st.error(e)
+            st.error(f"Error memuat gambar: {str(e)}")
+            st.stop()
 
     with col2:
-        try:
-            if source_image is None:
-                st.image(str(config.DEFAULT_DETECT_IMAGE), caption="Deteksi Default", use_container_width=True)
-            else:
-                if st.button("Deteksi Karies Gigi"):
-                    uploaded_image = Image.open(source_image)
-                    result = process_image_detection(model, uploaded_image, confidence)
-                    if result["success"]:
-                        st.image(result["plotted_image"], caption="Hasil Deteksi", use_container_width=True)
-                        detection_results_data = result["detection_data"]
-                    else:
-                        st.error(f"Deteksi gagal: {result['error']}")
-        except Exception as e:
-            st.error("Terjadi kesalahan saat proses deteksi.")
-            st.error(e)
+        if source_image:
+            if st.button("🔍 Deteksi Karies Gigi", type="primary"):
+                with st.spinner("Memproses deteksi..."):
+                    try:
+                        result = process_image_detection(model, uploaded_img, confidence)
+                        if result["success"]:
+                            st.image(result["plotted_image"], caption="Hasil Deteksi", use_column_width=True)
+                            detection_results_data = result["detection_data"]
+                            st.success("Deteksi berhasil!")
+                        else:
+                            st.error(f"Deteksi gagal: {result.get('error', 'Unknown error')}")
+                    except Exception as e:
+                        st.error(f"Terjadi kesalahan saat proses deteksi: {str(e)}")
+                        st.stop()
+        else:
+            default_detect = Image.open(config.DEFAULT_DETECT_IMAGE) if isinstance(config.DEFAULT_DETECT_IMAGE, str) else config.DEFAULT_DETECT_IMAGE
+            st.image(default_detect, caption="Deteksi Default", use_column_width=True)
 
-    if detection_results_data is not None:
+    if detection_results_data:
         st.markdown("---")
-        display_detection_results(detection_results_data, config.CLASSIFICATION)
+        with st.expander("📊 Detail Hasil Deteksi", expanded=True):
+            display_detection_results(detection_results_data, config.CLASSIFICATION)
