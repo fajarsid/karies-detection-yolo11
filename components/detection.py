@@ -36,7 +36,7 @@ def show_detection_page():
         show_image_detection(model, config_data["confidence"])
 
 def show_image_detection(model, confidence):
-    st.subheader("Unggah Gambar Gigi")
+    st.subheader("Unggah Gambar Rongtgen")
     
     # Validasi model terlebih dahulu
     if model is None:
@@ -83,7 +83,7 @@ def show_image_detection(model, confidence):
             default_detect = Image.open(config.DEFAULT_DETECT_IMAGE) if isinstance(config.DEFAULT_DETECT_IMAGE, str) else config.DEFAULT_DETECT_IMAGE
             st.image(default_detect, caption="Deteksi Default", use_column_width=True)
 
+
     if detection_results_data:
         st.markdown("---")
-        with st.expander("📊 Detail Hasil Deteksi", expanded=True):
-            display_detection_results(detection_results_data, config.CLASSIFICATION)
+        display_detection_results(detection_results_data, config.CLASSIFICATION)

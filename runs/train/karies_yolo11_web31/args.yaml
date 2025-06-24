@@ -13,7 +13,7 @@ cache: false
 device: cpu
 workers: 8
 project: runs/train
-name: karies_yolo11_web
+name: karies_yolo11_web31
 exist_ok: false
 pretrained: true
 optimizer: auto
@@ -102,4 +102,4 @@ auto_augment: randaugment
 erasing: 0.4
 cfg: null
 tracker: botsort.yaml
-save_dir: runs\train\karies_yolo11_web
+save_dir: runs\train\karies_yolo11_web31

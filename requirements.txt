@@ -2,3 +2,4 @@ ultralytics
 streamlit
 plotly
 pandas
+matplotlib
