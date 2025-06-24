@@ -53,9 +53,9 @@ def get_latest_trained_model_path(base_name='karies_yolo11_web'):
     return latest_run_path
 
 # Model paths
-DETECTION_MODEL = get_latest_trained_model_path() or (MODEL_DIR / 'default_yolo_detection.pt') 
-SEGMENTATION_MODEL = MODEL_DIR / 'yolo11n-seg.pt'
-POSE_ESTIMATION_MODEL = MODEL_DIR / 'yolo11n-pose.pt'
+DETECTION_MODEL = str(get_latest_trained_model_path() or (MODEL_DIR / 'yolo11n.pt')) 
+SEGMENTATION_MODEL = str(MODEL_DIR / 'yolo11n-seg.pt')
+POSE_ESTIMATION_MODEL = str(MODEL_DIR / 'yolo11n-pose.pt')
 
 # Constants
 CLASSIFICATION = ["karies", "gigi"]

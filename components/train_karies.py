@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
 # Path ke file konfigurasi dataset
-DATASET_CONFIG = 'karies.yaml'  # pastikan file ini sudah ada dan benar
+DATASET_CONFIG = 'config/karies.yaml'  # pastikan file ini sudah ada dan benar
 
 # Pilih model YOLO11 yang akan dilatih (bisa yolo11n.pt, yolo11s.pt, dst)
 MODEL = 'yolo11n.pt'

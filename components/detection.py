@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 import config
+import os
 from utils import (
     load_model, display_detection_results, process_image_detection
 )
@@ -10,6 +11,10 @@ def render_page_config():
     model_type = "Detection"
     confidence_value = float(st.slider("Tingkat Kepercayaan", 25, 100, 40)) / 100
     source_radio = config.SOURCES_LIST[0]
+    # Tampilkan warning jika file default model tidak ada
+    default_model_path = getattr(config, "DEFAULT_MODEL_PATH", "weights/yolo11n.pt")
+    if not os.path.exists(default_model_path):
+        st.warning(f"File model default tidak ditemukan di: {default_model_path}.")
     return {
         "model_type": model_type,
         "confidence": confidence_value,

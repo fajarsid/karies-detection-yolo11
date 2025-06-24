@@ -118,7 +118,6 @@ def main():
         menu_options = [
         "Dashboard",
         "Preprocessing",
-        "Labeling", 
         "Latih Model",
         "Deteksi Karies Gigi"
         ]
@@ -155,8 +154,6 @@ def main():
             show_about_page()
         elif st.session_state.menu_selected == "Preprocessing":
             show_preprocessing_page()
-        elif st.session_state.menu_selected == "Labeling":
-            show_labeling_page()
 
 if __name__ == "__main__":
     main()
