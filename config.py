@@ -20,7 +20,7 @@ DEFAULT_DETECT_IMAGE = IMAGES_DIR / 'detectedimage1.jpg'
 TRAIN_RUNS_DIR = ROOT / 'runs' / 'train'
 
 # --- Fungsi untuk mendapatkan path model terbaik terbaru secara dinamis ---
-def get_latest_trained_model_path(base_name='karies_yolo11_web'):
+def get_latest_trained_model_path(base_name='karies_yolo11_web3'):
     """
     Mencari folder training terbaru (berdasarkan nama dan angka tertinggi)
     dan mengembalikan path ke best.pt di dalamnya.

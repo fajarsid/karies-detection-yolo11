@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['karies']
+
+roboflow:
+  workspace: deteksi-karies
+  project: deteksi-karies-gigi-uuomn
+  version: 2
+  license: Public Domain
+  url: https://universe.roboflow.com/deteksi-karies/deteksi-karies-gigi-uuomn/dataset/2
